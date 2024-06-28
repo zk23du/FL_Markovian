@@ -13,20 +13,29 @@ import wandb
 np.random.seed(42)
 
 
-def sever_averaging(
-        global_model: nn.Module,
-        client_models: List[nn.Module]
-):
+# def sever_averaging(
+#         global_model: nn.Module,
+#         client_models: List[nn.Module]
+# ):
+#     global_state_dict = global_model.state_dict()
+
+#     for key in global_state_dict.keys():
+#         global_state_dict[key] = torch.stack([client_model.state_dict()[key] for client_model in client_models],
+#                                              0).mean(0)
+
+#     global_model.load_state_dict(global_state_dict)
+
+#     for client_model in client_models:
+#         client_model.load_state_dict(global_state_dict)
+
+def server_averaging(global_model: nn.Module, client_models: List[nn.Module]):
     global_state_dict = global_model.state_dict()
-
     for key in global_state_dict.keys():
-        global_state_dict[key] = torch.stack([client_model.state_dict()[key] for client_model in client_models],
-                                             0).mean(0)
-
+        global_state_dict[key] = torch.stack([client_model.state_dict()[key] for client_model in client_models], 0).mean(0)
     global_model.load_state_dict(global_state_dict)
-
     for client_model in client_models:
         client_model.load_state_dict(global_state_dict)
+
 
 
 def local_sgd(
